@@ -30,6 +30,7 @@
         width = 800 - margin.left - margin.right,
         height = 600 - margin.top - margin.bottom;
 
+        // Padding is a percentage of interval, in [0, 1], so real width of padding equal width * padding 
         var x0 = d3.scale.ordinal().rangeRoundBands([0, width], .1);
         var x1 = d3.scale.ordinal();
         var y = d3.scale.linear().range([height, 0])
@@ -48,13 +49,41 @@
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-        d3.csv('Data/bw.citi.csv', function(error, data) {if (error) throw error;dataViz(data)})
+        d3.csv('Data/bw.gender.csv', function(error, data) {if (error) throw error;dataViz(data)})
         function dataViz(data) {
-            var citybin = d3.nest()
+            function getleft(mdata) {
+                mdata.forEach(function(d) {
+                    console.log(d.vol)
+                    return d.vol
+            })}
+            var dbin = d3.nest()
                 .key(function(d) {return d.car})
+                .key(function(d) {return d.type1;})
+                .rollup(function(m) {return getleft(m);})
                 .entries(data)
 
-                console.log(citybin)
+            console.log(dbin)
+            //var leftdata = {name:}
+
+//            dbin.forEach(function (d) {
+//                d.values.forEach(function (el) {
+//                    el.values.forEach(function (ml) {
+//                        //console.log(ml)
+//                        if (ml.type2 == 'total') {
+//                            el.segvalue = ml.vol
+//                        }
+//                    })
+//                    //console.log(el.segvalue)
+//                    //console.log(el.values)
+//                })
+//                //d.segvalue = d.values.type2
+//                //console.log(d.values)
+//            })
+
+
+
+
+                //console.log(dbin)
         }
     </script>
             
