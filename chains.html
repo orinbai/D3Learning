@@ -59,31 +59,22 @@
             var dbin = d3.nest()
                 .key(function(d) {return d.car})
                 .key(function(d) {return d.type1;})
-                .rollup(function(m) {return getleft(m);})
+                //.rollup(function(m) {return getleft(m);})
                 .entries(data)
 
-            console.log(dbin)
             //var leftdata = {name:}
 
-//            dbin.forEach(function (d) {
-//                d.values.forEach(function (el) {
-//                    el.values.forEach(function (ml) {
-//                        //console.log(ml)
-//                        if (ml.type2 == 'total') {
-//                            el.segvalue = ml.vol
-//                        }
-//                    })
-//                    //console.log(el.segvalue)
-//                    //console.log(el.values)
-//                })
-//                //d.segvalue = d.values.type2
-//                //console.log(d.values)
-//            })
-
-
-
-
-                //console.log(dbin)
+            dbin.forEach(function (d) {
+                d.values.forEach(function (el) {
+                    el.values.forEach(function (ml) {
+                        if (ml.type2 == 'total') {
+                            el.segvalue = ml.vol
+                        }
+                    })
+                })
+            })
+            console.log(dbin)
+            console.log(d3.keys(dbin))
         }
     </script>
             
