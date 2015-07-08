@@ -62,15 +62,13 @@ display: none;
         newData = d3.nest()
         .key(function(d) {return d.car})
         .entries(data)
+        splitarray(newData)
 
 
         // data[0] is x.lab
         //var ageNames = d3.keys(data[0]).filter(function(key) { return key !== "State"; });
-        //var argNames = newData.map(function(d) {return d.key;})
         // argNames should be male and female
-        var argNames = newData.map(function(d) {d.types.map(function(v) {return v.name})})
-        console.log(argNames)
-        splitarray(newData)
+        var argNames = newData[0].types.map(function(d) {return d.name})
         function splitarray(ml) {
             ml.forEach(function(d) {
                 //d.ages = ageNames.map(function(name) { return {name: name, value: +d[name]}; });
@@ -84,21 +82,6 @@ display: none;
                 }).filter(function(el) {return el})
             });
         }
-
-//        ml.forEach(function(d) {
-//            //d.ages = ageNames.map(function(name) { return {name: name, value: +d[name]}; });
-//            //console.log(ageNames.map(function(name) {return {name:name, value:d[name]}}))
-//            //console.log(d.values.map(function(d) {return d.type1}))
-//            d.types = d.values.map(function(el) {
-//                if (el.type2 == 'total') {
-//                    console.log(el.type1)
-//                    return {name:el.type1, value:el.vol}
-//                }
-//            }).filter(function(el) {return el})
-//            console.log(d)
-//        });
-        //return 0
-        //console.log(JSON.stringify(newData))
 
         x0.domain(newData.map(function(d) {return d.key; }));
         x1.domain(argNames).rangeRoundBands([0, x0.rangeBand()]);
@@ -124,6 +107,7 @@ display: none;
             .style("text-anchor", "end")
             .text("用户数量");
 
+            console.log(JSON.stringify(newData.map(function(d) {return d.types.map(function(v) {return v.name});})))
             //console.log(argNames.slice())
             state = svg.selectAll(".state")
             .data(newData)
