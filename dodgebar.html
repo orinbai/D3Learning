@@ -67,6 +67,21 @@ display: none;
         .entries(data)
         
         function showsubgraphic(d, i) {
+            var margin = {top:20, right:5, bottom:5, left:5},
+            width = 320 - margin.right - margin.left,
+            height = 500 - margin.top - margin.bottom;
+            var y00 = d3.scale.ordinal()
+            .rangeRoundBands([height, 0], .5));
+            var y11 = d3.scale.ordinal();
+            var x = d3.scale.linear().range([0, width]);
+
+            var xAxis = d3.svg.axis()
+            .scale(x_
+            .orient("top")
+
+            var yAxis = 
+
+
             var testdata = d3.merge([d3.values(newData[0].values), d3.values(newData[i].values)])
             var newdatum = d3.nest()
             .key(function(d) {return d.type2})
