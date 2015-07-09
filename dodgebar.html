@@ -23,6 +23,10 @@ display: none;
 
 </style>
 <body>
+    <div id='main_bar_l'>
+    </div>
+    <div id='main_bar_r'>
+    </div>
 <script src="../d3/d3.min.js"></script>
 <script>
 
@@ -50,25 +54,41 @@ display: none;
     .orient("left")
     .tickFormat(d3.format(".2s"));
 
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select("div#main_bar_l").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    //d3.csv("Data/data.csv", function(error, data) {
     d3.csv("Data/bw.gender.csv", function(error, data) {
         if (error) throw error;
         newData = d3.nest()
         .key(function(d) {return d.car})
         .entries(data)
-        splitarray(newData)
+        
+        function showsubgraphic(d, i) {
+            var testdata = d3.merge([d3.values(newData[0].values), d3.values(newData[i].values)])
+            var newdatum = d3.nest()
+            .key(function(d) {return d.type2})
+            .sortKeys(d3.descending)
+            .key(function(d) {return d.type1})
+            .entries(testdata)
+            newarg = newdatum.map(function(d) {return d.key})
 
+            var svg2 = d3.select('div#main_bar_r').append('svg')
+            .attr("width", width-200)
+            .attr('height', height + margin.top + margin.bottom)
+            .append('g')
+            .attr('id', 'hbar')
 
-        // data[0] is x.lab
-        //var ageNames = d3.keys(data[0]).filter(function(key) { return key !== "State"; });
-        // argNames should be male and female
-        var argNames = newData[0].types.map(function(d) {return d.name})
+            svg2.append('g')
+                .attr("class", "x1 axis")
+                .attr("transform", 'translate('+width+margin.left+margin.right+','+0)
+                .call(xAxis)
+            //console.log(newdatum)
+            //console.log(newdatum.map(function(d) {return d.values}))
+        }
+
         function splitarray(ml) {
             ml.forEach(function(d) {
                 //d.ages = ageNames.map(function(name) { return {name: name, value: +d[name]}; });
@@ -82,6 +102,14 @@ display: none;
                 }).filter(function(el) {return el})
             });
         }
+
+
+
+        // data[0] is x.lab
+        //var ageNames = d3.keys(data[0]).filter(function(key) { return key !== "State"; });
+        // argNames should be male and female
+        splitarray(newData)
+        var argNames = newData[0].types.map(function(d) {return d.name})
 
         x0.domain(newData.map(function(d) {return d.key; }));
         x1.domain(argNames).rangeRoundBands([0, x0.rangeBand()]);
@@ -107,14 +135,16 @@ display: none;
             .style("text-anchor", "end")
             .text("用户数量");
 
-            console.log(JSON.stringify(newData.map(function(d) {return d.types.map(function(v) {return v.name});})))
+            //console.log(JSON.stringify(newData.map(function(d) {return d.types.map(function(v) {return v.name});})))
             //console.log(argNames.slice())
             state = svg.selectAll(".state")
             .data(newData)
             .enter().append("g")
             .attr("class", "g")
+            .on('click', showsubgraphic)
             // transform the coordinate of every bar chart (x, 0)
             .attr("transform", function(d) { console.log(x0(d.key) + ':' + d.key);return "translate(" + x0(d.key) + ",0)"; });
+
 
         state.selectAll("rect")
             .data(function(d) {return d.types; })
@@ -126,10 +156,9 @@ display: none;
             .style("fill", function(d) { return color(d.name); });
         // PaT to slice method, js array is like array slice [start:end] in python
         // console.log(ageNames.slice(1,5))
-        return 0
         
         var legend = svg.selectAll(".legend")
-            .data(ageNames.slice().reverse())
+            .data(argNames.slice().reverse())
             .enter().append("g")
             .attr("class", "legend")
             .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
