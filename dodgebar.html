@@ -31,7 +31,7 @@ display: none;
 <script>
 
     var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
+    width = 480 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
     var x0 = d3.scale.ordinal()
@@ -68,18 +68,23 @@ display: none;
         
         function showsubgraphic(d, i) {
             var margin = {top:20, right:5, bottom:5, left:5},
-            width = 320 - margin.right - margin.left,
+            width = 480 - margin.right - margin.left,
             height = 500 - margin.top - margin.bottom;
             var y00 = d3.scale.ordinal()
-            .rangeRoundBands([height, 0], .5));
+            .rangeRoundBands([height, 0], .5);
             var y11 = d3.scale.ordinal();
             var x = d3.scale.linear().range([0, width]);
 
             var xAxis = d3.svg.axis()
-            .scale(x_
+            .scale(x)
             .orient("top")
+            .ticks(10)
+            .tickFormat(d3.format('.2s'))
 
-            var yAxis = 
+            var yAxis = d3.svg.axis()
+            .scale(y00)
+            .orient("left")
+            .tickSize(9)
 
 
             var testdata = d3.merge([d3.values(newData[0].values), d3.values(newData[i].values)])
@@ -88,18 +93,34 @@ display: none;
             .sortKeys(d3.descending)
             .key(function(d) {return d.type1})
             .entries(testdata)
-            newarg = newdatum.map(function(d) {return d.key})
+            newarg = newdatum.map(function(d) {if (d.key != 'total') {return d.key}}).filter(function(m) {return m})
+            typarg = newdatum[0].values.map(function(d) {return d.key})
+            console.log(typarg)
+            console.log(newarg)
 
+            y00.domain(newarg.map(function(d) {return d}))
+            y11.domain(typarg).rangeRoundBands([0, y00.rangeBand()]);
             var svg2 = d3.select('div#main_bar_r').append('svg')
             .attr("width", width-200)
             .attr('height', height + margin.top + margin.bottom)
             .append('g')
             .attr('id', 'hbar')
+            var startp = width + margin.left + margin.right
 
             svg2.append('g')
-                .attr("class", "x1 axis")
-                .attr("transform", 'translate('+width+margin.left+margin.right+','+0)
+                .attr("class", "subx1")
+                .attr("transform", 'translate('+startp+','+0+')')
                 .call(xAxis)
+
+            //y00.domain(
+            svg2.append('g')
+                .attr('class', 'suby1')
+                .attr('transform', 'translate('+width/2+',0)')
+                .call(yAxis)
+                .style('border', 0.1)
+                .style('stroke-width', 1)
+
+            console.log(width+margin.left+margin.right)
             //console.log(newdatum)
             //console.log(newdatum.map(function(d) {return d.values}))
         }
